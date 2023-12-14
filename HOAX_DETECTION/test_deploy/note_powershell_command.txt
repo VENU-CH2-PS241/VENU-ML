@@ -1,4 +1,4 @@
-Set-Variables -Name "MODEL" -Value "$(pwd)/test_deploy"
+Set-Variable -Name "MODEL" -Value "$(pwd)/test_deploy"
 docker run -t --rm -p 8501:8501 -v "$MODEL/model:/models/NLP" -e MODEL_NAME=NLP tensorflow/serving
 
 remove-item alias:curl
