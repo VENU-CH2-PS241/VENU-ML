@@ -1,5 +1,5 @@
-import numpy as np
 import tensorflow as tf
+import time
 
 from transformers import BertTokenizer
 
@@ -13,7 +13,8 @@ class Predict:
         return model
     
     def preprocess_text(self):
-        tokenizer = BertTokenizer.from_pretrained('indobenchmark/indobert-lite-base-p1')
+        start_time = time.time()
+        tokenizer = BertTokenizer.from_pretrained('indobenchmark/indobert-lite-base-p1', use_fast=True)
         tokenized_text = tokenizer(
             text=self.text,
             add_special_tokens=True,
@@ -24,16 +25,23 @@ class Predict:
             return_token_type_ids=False,
             return_attention_mask=True,
         )
-        return tokenized_text
+        end_time = time.time()
+        execution_time = end_time - start_time
+        return [tokenized_text, execution_time]
 
     def predict(self):
+        start_time = time.time()
         model = self.load_model()
-        tokenized_text = self.preprocess_text()
-        predictions = model(tokenized_text)
-        predicted_class = np.argmax(predictions)  
-        probability = predictions[0][predicted_class]
+        preprocessed_text = self.preprocess_text()
+        tokenized_text = preprocessed_text[0]
+        exec_time_preprocess = preprocessed_text[1]
+        predictions = model([tokenized_text['input_ids'], tokenized_text['attention_mask']])
+        probability = predictions._numpy()[0][0]
+        end_time = time.time()
+        execution_time_model = end_time - start_time
         result = {
-            'predicted_class': float(predicted_class),
-            'probability': float(probability)
+            'probability': float(probability),
+            'exec_time_model' : execution_time_model,
+            'exec_time_preprocess' : exec_time_preprocess
         }
         return result
