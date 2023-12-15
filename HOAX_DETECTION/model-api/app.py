@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify, render_template
 import numpy as np
 import tensorflow as tf
 from predicthoax import Predict
+from predict_hoax_lstm import Predict_lstm
+
 import os
 
 
@@ -65,7 +67,7 @@ def predict_text():
 
         text = str(file)
         
-        predictor = Predict(text, model_path=model_path_hoax)
+        predictor = Predict_lstm(text, model_path=model_path_hoax)
         prediction_result = predictor.predict()
 
         response = {
