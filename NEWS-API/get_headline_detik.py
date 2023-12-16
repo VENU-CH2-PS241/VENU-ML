@@ -10,23 +10,31 @@ def get_headline_detik():
     datas = get(url)
     soup = BeautifulSoup(datas.text, 'html.parser')
     tag = soup.find_all("article")
-    sumber = 'detikNews'
-    # print(tag)
+    source = 'detikNews'
     data = {
         'title' : [],
         'link' : [],
-        # 'image' : [],
-        # 'source' : []
+        'image' : [],
+        'source' : []
     }
     for no in range(len(tag)):
         try:
-            data['title'].append(tag[no].find('div', class_ = re.compile('media .*')).find('div', class_ = re.compile('media__text.*')).find(['h2', 'h3']).get_text().strip())
-            data['link'].append(tag[no].find('div', class_ = re.compile('media .*')).find('div', class_ = re.compile('media__text.*')).find(['h2', 'h3']).find('a')['href'])
+            media = tag[no].find('div', class_ = re.compile('media .*'))
+            media_text = media.find('div', class_ = re.compile('media__text.*'))
+            media_image = media.find('div', class_ = re.compile('media__image.*'))
+            title = media_text.find(['h2', 'h3']).get_text().strip()
+            link = media_text.find(['h2', 'h3']).find('a')['href']
+            image = media_image.find('a').find('span').find('img')['src'].strip()
+
+            data['title'].append(title)
+            data['link'].append(link)
+            data['image'].append(image)
+            data['source'].append(source)
         except:
             pass
 
     # data = pd.DataFrame(data)
-    print(data, len(data))
-    # return data
+    # print(data, len(data['link']))
+    return data
 
 get_headline_detik()

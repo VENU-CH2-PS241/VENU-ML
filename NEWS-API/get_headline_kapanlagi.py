@@ -39,4 +39,5 @@ def get_headline_kapanlagi():
     data = pd.DataFrame(data)
     # print(data.head(), len(data))
     # print(data.link[0])
-    data.to_csv('headline\{}_headline_{}.csv'.format(source, str(today)))
+    # data.to_csv('headline\{}_headline_{}.csv'.format(source, str(today)))
+    return data

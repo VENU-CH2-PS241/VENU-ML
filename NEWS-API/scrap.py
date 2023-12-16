@@ -12,7 +12,7 @@ from get_headline_kapanlagi import get_headline_kapanlagi
 from get_content_liputan6 import scrap_liputan6
 from get_headline_liputan import get_headline_liputan6
 
-get_headline_cnn()
+headline_cnn = get_headline_cnn()
 get_headline_detik()
 get_headline_kapanlagi()
 get_headline_liputan6()
