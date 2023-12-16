@@ -1,8 +1,5 @@
 from flask import Flask, request, jsonify, render_template
 import numpy as np
-import tensorflow as tf
-from predicthoax import Predict
-from predict_hoax_lstm import Predict_lstm
 
 import os
 
