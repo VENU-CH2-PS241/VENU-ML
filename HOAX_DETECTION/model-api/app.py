@@ -13,7 +13,7 @@ parent_dir = os.path.dirname(os.path.dirname(current_dir))
 target_dir = os.path.join(parent_dir, 'model-api', 'model')
 
 # Model path
-model_path_hoax = os.path.join(target_dir, 'model/lstm_model.joblib') 
+model_path_hoax = os.path.join(target_dir, 'lstm_model.joblib') 
 
 @app.route("/")
 def home():
