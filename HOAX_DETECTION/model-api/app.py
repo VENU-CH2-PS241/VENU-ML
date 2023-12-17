@@ -13,7 +13,7 @@ parent_dir = os.path.dirname(os.path.dirname(current_dir))
 target_dir = os.path.join(parent_dir, 'model-api', 'model')
 
 # Model path
-model_path_hoax = os.path.join(target_dir, "1") 
+model_path_hoax = os.path.join(target_dir, 'model/lstm_model.joblib') 
 
 @app.route("/")
 def home():
@@ -22,8 +22,8 @@ def home():
 @app.route("/api/v1/predict/hoax", methods=['POST'])
 def predict_text():
     if request.method == 'POST':        
-        file = request.form['file']
-        text = str(file)
+        file = request.get_json()
+        text = file['text']
         
         predictor = Predict_lstm(text, model_path=model_path_hoax)
         prediction_result = predictor.predict()
@@ -31,8 +31,6 @@ def predict_text():
         response = {
             'message': 'File successfully received and processed',
             'probability': prediction_result['probability'],
-            'exec_time_model' : prediction_result['exec_time_model'],
-            'exec_time_preprocess' : prediction_result['exec_time_preprocess']
         }
         return jsonify(**response), 200
 

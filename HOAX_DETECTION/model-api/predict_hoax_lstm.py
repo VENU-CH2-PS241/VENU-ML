@@ -16,7 +16,7 @@ class Predict_lstm:
         self.model_path = model_path
 
     def load_model(self):
-        model = joblib.load('model/lstm_model.joblib')
+        model = joblib.load(self.model_path)
         return model
     
     def preprocess_text(self):

@@ -33,7 +33,7 @@ def get_headline_detik():
         except:
             pass
 
-    # data = pd.DataFrame(data)
+    data = pd.DataFrame(data)
     # print(data, len(data['link']))
     return data
 

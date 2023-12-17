@@ -1,40 +1,40 @@
-from flask import Flask, request, jsonify, render_template
-import numpy as np
+import pandas as pd
+import json
 
-import os
+from flask import Flask, request, jsonify, render_template
+from get_content_detik import scrap_detik
+from get_headline_detik import get_headline_detik
+from get_content_cnn import scrap_cnn
+from get_headline_cnn import get_headline_cnn
+from get_content_kapanlagi import scrap_kapanlagi
+from get_headline_kapanlagi import get_headline_kapanlagi
+from get_content_liputan6 import scrap_liputan6
+from get_headline_liputan import get_headline_liputan6
+from datetime import date
 
 app = Flask(__name__)
-
-current_dir = os.path.abspath(__file__)  
-parent_dir = os.path.dirname(os.path.dirname(current_dir))  
-target_dir = os.path.join(parent_dir, 'model-api', 'model')
-
-# Model path
-model_path_hoax = os.path.join(target_dir, "1") 
 
 @app.route("/")
 def home():
     return render_template('index.html')
 
-@app.route("/api/v1/predict/hoax", methods=['POST'])
-def predict_text():
-    if request.method == 'POST':        
-        file = request.form['file']
-        text = str(file)
-        
-        predictor = Predict_lstm(text, model_path=model_path_hoax)
-        prediction_result = predictor.predict()
+@app.route("/api/scrap", methods=['GET'])
+def scrap():
+    headline_cnn = get_headline_cnn()
+    headline_detik = get_headline_detik()
+    headline_kapanlagi = get_headline_kapanlagi()
+    headline_liputan6 = get_headline_liputan6()
 
-        response = {
-            'message': 'File successfully received and processed',
-            'probability': prediction_result['probability'],
-            'exec_time_model' : prediction_result['exec_time_model'],
-            'exec_time_preprocess' : prediction_result['exec_time_preprocess']
-        }
-        return jsonify(**response), 200
+    content_cnn = scrap_cnn(headline_cnn)
+    content_detik = scrap_detik(headline_detik)
+    content_kapanlagi = scrap_kapanlagi(headline_kapanlagi)
+    content_liputan6 = scrap_liputan6(headline_liputan6)
 
-def allowed_file(filename):
-    return type(filename) == str
+    df = pd.concat([content_cnn, content_detik, content_kapanlagi, content_liputan6])
+    df.to_json('content_{}.json'.format(str(date.today())), orient='records', lines=True)
+
+    return json.dumps(json.loads(df.to_json(orient="records")))
+    
 
 if __name__ == '__main__':
     app.run()
