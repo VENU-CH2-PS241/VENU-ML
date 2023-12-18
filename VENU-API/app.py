@@ -14,6 +14,8 @@ from news_api.get_headline_kapanlagi import get_headline_kapanlagi
 from news_api.get_content_liputan6 import scrap_liputan6
 from news_api.get_headline_liputan import get_headline_liputan6
 
+from syscom_api.main import predict_syscom
+
 from model_api.predict_hoax_lstm import Predict_lstm
 
 app = Flask(__name__)
@@ -31,16 +33,16 @@ def home():
 @app.route("/api/scrap", methods=['GET'])
 def scrap():
     headline_cnn = get_headline_cnn()
-    headline_detik = get_headline_detik()
+    # headline_detik = get_headline_detik()
     headline_kapanlagi = get_headline_kapanlagi()
     headline_liputan6 = get_headline_liputan6()
 
     content_cnn = scrap_cnn(headline_cnn)
-    content_detik = scrap_detik(headline_detik)
+    # content_detik = scrap_detik(headline_detik)
     content_kapanlagi = scrap_kapanlagi(headline_kapanlagi)
     content_liputan6 = scrap_liputan6(headline_liputan6)
 
-    df = pd.concat([content_cnn, content_detik, content_kapanlagi, content_liputan6])
+    df = pd.concat([content_cnn, content_kapanlagi, content_liputan6])
     df.to_json('content_{}.json'.format(str(date.today())), orient='records', lines=True)
 
     return json.dumps(json.loads(df.to_json(orient="records")))
@@ -52,6 +54,21 @@ def predict_text():
         text = file['text']
         
         predictor = Predict_lstm(text, model_path=model_dir)
+        prediction_result = predictor.predict()
+
+        response = {
+            'message': 'File successfully received and processed',
+            'probability': prediction_result['probability'],
+        }
+        return jsonify(**response), 200
+    
+@app.route("/api/v1/predict/syscom", methods=['POST'])
+def predict_text():
+    if request.method == 'POST':        
+        file = request.get_json()
+        text = file['text']
+        
+        predictor = Predict_lstm(text)
         prediction_result = predictor.predict()
 
         response = {
