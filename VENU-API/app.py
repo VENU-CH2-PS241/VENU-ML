@@ -14,17 +14,16 @@ from news_api.get_headline_kapanlagi import get_headline_kapanlagi
 from news_api.get_content_liputan6 import scrap_liputan6
 from news_api.get_headline_liputan import get_headline_liputan6
 
-from syscom_api.main import predict_syscom
+from predict_syscom import system_predict
 
-from model_api.predict_hoax_lstm import Predict_lstm
+from predict_hoax_lstm import Predict_lstm
 
 app = Flask(__name__)
 
 current_dir = os.path.abspath(__file__)  
 parent_dir = os.path.dirname(os.path.dirname(current_dir))  
+target_dir = os.path.join(parent_dir, 'VENU-API', 'model')
 
-# Model path
-model_dir = os.path.join(parent_dir, 'VENU-API', 'model_api', 'model')
 
 @app.route("/")
 def home():
@@ -43,7 +42,7 @@ def scrap():
     content_liputan6 = scrap_liputan6(headline_liputan6)
 
     df = pd.concat([content_cnn, content_kapanlagi, content_liputan6])
-    df.to_json('content_{}.json'.format(str(date.today())), orient='records', lines=True)
+    df.to_json('datasets/content_{}.json'.format(str(date.today())), orient='records', lines=True)
 
     return json.dumps(json.loads(df.to_json(orient="records")))
 
@@ -53,7 +52,7 @@ def predict_text():
         file = request.get_json()
         text = file['text']
         
-        predictor = Predict_lstm(text, model_path=model_dir)
+        predictor = Predict_lstm(text, model_path=target_dir)
         prediction_result = predictor.predict()
 
         response = {
@@ -63,17 +62,17 @@ def predict_text():
         return jsonify(**response), 200
     
 @app.route("/api/v1/predict/syscom", methods=['POST'])
-def predict_text():
+def predict_syscomt():
     if request.method == 'POST':        
         file = request.get_json()
         text = file['text']
         
-        predictor = Predict_lstm(text)
+        predictor = system_predict(text)
         prediction_result = predictor.predict()
 
         response = {
             'message': 'File successfully received and processed',
-            'probability': prediction_result['probability'],
+            'indices': prediction_result['indices'],
         }
         return jsonify(**response), 200
 

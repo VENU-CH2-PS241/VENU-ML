@@ -1,15 +1,13 @@
 import pandas as pd
 import os
 import joblib
-import time
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from syscom_api.preprocessing_dataset import preprocess_text
+from preprocessing_dataset import preprocess_text
 
-BASE_URL = 'syscom_api'
-DATASET_URL = os.path.join(BASE_URL, 'datasets')
-MODEL_URL = os.path.join(BASE_URL, 'models')
+DATASET_URL = 'datasets'
+MODEL_URL = 'model'
 
 class system_predict:
     def __init__(self, article):
@@ -45,7 +43,7 @@ class system_predict:
             tfidf_matrix_train = tfidf_vectorizer.fit_transform(X_train)
             joblib.dump(tfidf_vectorizer, os.path.join(MODEL_URL, 'vectorizer', 'tfidf_vectorizer.joblib'))
         
-        return data, tfidf_vectorizer, tfidf_matrix_train
+        return tfidf_vectorizer, tfidf_matrix_train
         
 
     # # Fungsi untuk merekomendasikan artikel
@@ -56,14 +54,14 @@ class system_predict:
         return similar_articles_indices, cosine_similarities[similar_articles_indices]
 
     # # Menggunakan model pada beberapa sampel dari set uji untuk evaluasi
-    def predict_syscom(self):
-        data, tfidf_vectorizer, tfidf_matrix_train = self.train_model()
+    def predict(self):
+        tfidf_vectorizer, tfidf_matrix_train = self.train_model()
             
-        indices, scores = self.recommend_articles(self.article, tfidf_vectorizer, tfidf_matrix_train, top_n=5)
-        print(f"Artikel Uji: {self.article[:100]}...")  # Menampilkan 100 karakter pertama
-        print("Rekomendasi:")
-        for idx, score in zip(indices, scores):
-            print(f" - {data.iloc[idx][:100]}... Skor: {score:.4f}")
-        print("\n")
+        indices, scores = self.recommend_articles(tfidf_vectorizer, tfidf_matrix_train, top_n=5)
+        indices = indices.astype('int32')
+        result = {
+            'indices' : indices.tolist()
+        }
+        return result
 
 
