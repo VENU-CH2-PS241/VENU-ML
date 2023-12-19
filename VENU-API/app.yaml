@@ -1,3 +1,4 @@
+service: venu-api
 runtime: python39
 entrypoint: gunicorn -b :$PORT main:app
 
