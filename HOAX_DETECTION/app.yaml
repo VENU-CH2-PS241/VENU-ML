@@ -1,5 +1,4 @@
-service: hoax-api
-runtime: python
+runtime: python39
 entrypoint: gunicorn -b :$PORT main:app
 
 instance_class: F2
