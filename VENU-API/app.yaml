@@ -1,6 +1,6 @@
-service: venu-api
+service: default
 runtime: python39
-entrypoint: gunicorn -b :8080 :app
+entrypoint: gunicorn -b :8080 app:app
 
 instance_class: F2
 

@@ -1,9 +1,11 @@
 import json
 import requests
 
+from predict_hoax_lstm import Predict_lstm
+
 # Ton to be sent
 def get_response_scrap():
-    url = "http://127.0.0.1:5000/api/scrap"
+    url = "https://venu-project-408000.as.r.appspot.com/api/scrap"
 
     r = requests.get(url)
     print(r)
@@ -12,7 +14,7 @@ def get_response_scrap():
 def get_response_hoax():
     datas = {'text' : 'var1'}
 
-    url = "http://127.0.0.1:5000/api/v1/predict/hoax"
+    url = "https://venu-project-408000.as.r.appspot.com/api/v1/predict/hoax"
 
     r = requests.post(url, json=datas)
     print(r)
@@ -20,13 +22,19 @@ def get_response_hoax():
     print(str(r.content, 'utf-8'))
 
 def get_response_syscom():
-    datas = {'text' : 'var1'}
+    datas = {'text' : 'dsada asd'}
 
-    url = "http://127.0.0.1:5000/api/v1/predict/syscom"
+    url = "https://venu-project-408000.as.r.appspot.com/api/v1/predict/syscom"
 
     r = requests.post(url, json=datas)
     print(r)
     print(json.dumps(datas))
     print(str(r.content, 'utf-8'))
 
-get_response_syscom()
+def test_infer():
+    predictor = Predict_lstm('afsa', model_path='model')
+    prediction_result = predictor.predict()
+
+    print(prediction_result)
+
+get_response_hoax()
