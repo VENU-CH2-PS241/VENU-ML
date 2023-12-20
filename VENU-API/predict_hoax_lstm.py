@@ -16,6 +16,7 @@ class Predict_lstm:
 
     def load_model(self):
         model = joblib.load(os.path.join(self.model_path, 'lstm_model.joblib'))
+        model = tf.keras.models.load_model(os.path.join(self.model_path, 'model_lstm.h5'))
         return model
     
     def preprocess_text(self):
