@@ -1,11 +1,14 @@
 import json
 import requests
+import pandas as pd
+import numpy as np
+import os
 
 from predict_hoax_lstm import Predict_lstm
 
 # Ton to be sent
 def get_response_scrap():
-    url = "https://venu-project-408000.as.r.appspot.com/api/scrap"
+    url = "http://127.0.0.1:5000/api/scrap"
 
     r = requests.get(url)
     print(r)
@@ -33,10 +36,14 @@ def get_response_syscom():
     print(json.dumps(datas))
     print(str(r.content, 'utf-8'))
 
-def test_infer():
-    predictor = Predict_lstm('afsa', model_path='model')
+def test_inference():
+    datas = pd.DataFrame({'berita' : ['var1', 'safw asdkfwe', 'https://adsfwei sadkfwe', '23 asldfj s']})
+    data_processed = pd.read_json(os.path.join('datasets', 'content_2023-12-17.json'), orient='records', lines=True)
+
+    predictor = Predict_lstm(data_processed, 'model')
     prediction_result = predictor.predict()
 
-    print(prediction_result)
+    print(np.squeeze(prediction_result['probability']))
 
-test_infer()
+get_response_scrap()
+# test_inference()
