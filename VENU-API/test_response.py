@@ -22,7 +22,9 @@ def get_response_hoax():
     print(str(r.content, 'utf-8'))
 
 def get_response_syscom():
-    datas = {'text' : 'dsada asd'}
+    datas = {
+        'text' : 'dsada asd'
+    }
 
     url = "https://venu-project-408000.as.r.appspot.com/api/v1/predict/syscom"
 
@@ -37,4 +39,4 @@ def test_infer():
 
     print(prediction_result)
 
-get_response_hoax()
+test_infer()
