@@ -35,22 +35,22 @@ def scrap():
     headline_cnn = get_headline_cnn()
     # headline_detik = get_headline_detik()
     headline_kapanlagi = get_headline_kapanlagi()
-    # headline_liputan6 = get_headline_liputan6()
+    headline_liputan6 = get_headline_liputan6()
 
     content_cnn = scrap_cnn(headline_cnn)
     # content_detik = scrap_detik(headline_detik)
     content_kapanlagi = scrap_kapanlagi(headline_kapanlagi)
-    # content_liputan6 = scrap_liputan6(headline_liputan6)
+    content_liputan6 = scrap_liputan6(headline_liputan6)
 
-    df = pd.concat([content_cnn, content_kapanlagi])
+    df = pd.concat([content_cnn, content_kapanlagi, content_liputan6])
 
-    predictor = Predict_lstm(df, model_path=target_dir)
-    prediction_result = predictor.predict()
+    # predictor = Predict_lstm(df, model_path=target_dir)
+    # prediction_result = predictor.predict()
 
-    print(np.squeeze(prediction_result['probability']))
-    df['prediction'] = np.squeeze(prediction_result['probability'])
+    # print(np.squeeze(prediction_result['probability']))
+    # df['prediction'] = np.squeeze(prediction_result['probability'])
 
-    df.to_json('datasets/content_{}.json'.format(str(date.today())), orient='records', lines=True)
+    # df.to_json('datasets/content_{}.json'.format(str(date.today())), orient='records', lines=True)
 
     return json.dumps(json.loads(df.to_json(orient="records")))
 
